@@ -40,7 +40,7 @@ var maps = [
 		"enemies": [],
 		# Objetos do mapa (NPCs, itens, etc.)
 		"objects": [
-			{"pos": Vector2(10, 5), "type": "npc", "name": "Guard", "dialogue": "Bem-vindo ao corredor."}
+			{"pos": Vector2(10, 5), "type": "npc", "name": "Guard", "dialogue": "Nunca achei que fosses chegar a este ponto... Já não tens muito tempo para sair daqui. Boa sorte na tua jornada. Eu acredito em ti"}
 		]
 	},
 	{
@@ -52,9 +52,14 @@ var maps = [
 			{"pos": Vector2(0, 6), "leads_to": 1, "direction": "west"}
 		],
 		"enemies": [
-			{"pos": Vector2(10, 6), "name": "Espelho", "hp": 30, "attack": 5, "dialogue": "Você se aproxima do espelho... Algo sinistro reflete de volta."},
-			{"pos": Vector2(2, 10), "name": "Livro", "hp": 30, "attack": 5, "dialogue": "Você encontra um livro antigo no canto da sala.", "no_battle": true},
-			{"pos": Vector2(1, 1), "name": "Casaco", "hp": 25, "attack": 4, "dialogue": "Um casaco misterioso está largado no chão.", "no_battle": true}
+			{"pos": Vector2(2, 10), "name": "Espelho", "hp": 30, "attack": 5, "dialogue": "Você se aproxima do espelho... Algo sinistro reflete de volta."},
+			{"pos": Vector2(10, 6), "name": "Livro", "hp": 30, "attack": 5, "dialogue": "Você encontra um livro antigo no canto da sala.", "no_battle": true},
+			{"pos": Vector2(1, 1), "name": "Casaco", "hp": 25, "attack": 4, "dialogue": "Um casaco está largado no chão.", "no_battle": true}
+		   ,{"pos": Vector2(4, 3), "name": "Cadeira", "hp": 20, "attack": 0, "dialogue": "Uma cadeira velha range quando você se aproxima. Parece ter visto muitas histórias.", "no_battle": true}
+		   ,{"pos": Vector2(12, 8), "name": "Abajur", "hp": 20, "attack": 0, "dialogue": "O abajur pisca suavemente, iluminando memórias esquecidas.", "no_battle": true}
+		   ,{"pos": Vector2(7, 2), "name": "Quadro", "hp": 20, "attack": 0, "dialogue": "O quadro na parede mostra uma paisagem serena, mas há algo inquietante em seu olhar.", "no_battle": true}
+		   ,{"pos": Vector2(13, 4), "name": "Relógio", "hp": 20, "attack": 0, "dialogue": "O relógio faz tique-taque, lembrando que o tempo nunca para.", "no_battle": true}
+		   ,{"pos": Vector2(5, 10), "name": "Almofada", "hp": 20, "attack": 0, "dialogue": "Uma almofada macia parece convidar para um breve descanso.", "no_battle": true}
 		]
 	}
 ]
@@ -172,7 +177,7 @@ func _ready() -> void:
 	else:
 		logger = null
 
-	_load_map(2)  # Começar direto na Sala do Chefe
+	_load_map(0)  # Começar direto na Sala do Chefe
 
 func _load_map(map_index: int) -> void:
 	current_map = map_index
@@ -882,9 +887,17 @@ func _draw() -> void:
 			_draw_player_sprite(screen_pos, Color.CYAN)
 
 func _draw_npc(pos: Vector2, _obj: Dictionary) -> void:
-	# Deslocar um pouco para cima e desenhar um círculo verde
-	var npc_pos = pos + Vector2(0, -20)
-	draw_circle(npc_pos, 14, Color(0, 1, 0))
+	# Desenhar NPC igual ao player, mas em verde
+	var head_pos = pos + Vector2(0, -(PLAYER_HEIGHT + PLAYER_HEAD_RADIUS))
+	draw_circle(head_pos, PLAYER_HEAD_RADIUS, Color(0, 1, 0))
+
+	var body_points = PackedVector2Array([
+		pos + Vector2(-PLAYER_WIDTH / 2.0, -PLAYER_HEIGHT),
+		pos + Vector2(PLAYER_WIDTH / 2.0, -PLAYER_HEIGHT),
+		pos + Vector2(PLAYER_WIDTH / 2.0, 0),
+		pos + Vector2(-PLAYER_WIDTH / 2.0, 0)
+	])
+	draw_polygon(body_points, PackedColorArray([Color(0, 0.7, 0)]))
 
 func cartesian_to_isometric(cart: Vector2) -> Vector2:
 	return Vector2((cart.x - cart.y) * TILE_WIDTH_HALF, (cart.x + cart.y) * TILE_HEIGHT_HALF)
